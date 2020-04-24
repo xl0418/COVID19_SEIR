@@ -112,11 +112,11 @@ theme_grey_dark <- shinyDashboardThemeDIY(
   ,boxDangerColor = "rgb(240,80,80)"
 
   ,tabBoxTabColor = "rgb(45,45,45)"
-  ,tabBoxTabTextSize = 14
-  ,tabBoxTabTextColor = "rgb(205,205,205)"
-  ,tabBoxTabTextColorSelected = "rgb(205,205,205)"
+  ,tabBoxTabTextSize = 18
+  ,tabBoxTabTextColor = "rgb(190,190,190)"
+  ,tabBoxTabTextColorSelected = "rgb(255,255,255)"
   ,tabBoxBackColor = "rgb(45,45,45)"
-  ,tabBoxHighlightColor = "rgb(70,80,90)"
+  ,tabBoxHighlightColor = "rgb(64,64,64)"
   ,tabBoxBorderRadius = 5
 
   ### inputs
@@ -149,85 +149,84 @@ body <- dashboardBody(
       ### changing theme
     theme_grey_dark,
 
-# The first tab
-    tabItems(
-      # First tab content
-      tabItem(tabName = "tab1",
-            # Customize the control panel
-            tags$head(
-              includeCSS("styles.css"),
-            ),
+    fluidRow(
+            tabBox(
+                title = NULL, width = 12,
+                # The id lets us use input$tabset1 on the server to find the current tab
+                id = "tabset1", height = "810px",
+                tabPanel("MAP", 
+                # Customize the control panel
+                  tags$head(
+                    includeCSS("styles.css"),
+                  ),
 
-            # Call the mapper function
-            div(plotlyOutput("plot_map", height = 1000, width = "82%"), align = "right"),
-            # Set the background color and the opacity of the absolute panel
-            tags$head(tags$style(
-            HTML('
-                #controls {background-color: rgba(55,55,55,1);;}
-                #infectiondata {background-color: rgba(55,55,55,1);;}
-                #sel_date {background-color: rgba(0,0,255,1);}'
+                  # Call the mapper function
+                  div(plotlyOutput("plot_map", height = 780, width = "82%"), align = "right"),
+                  # Set the background color and the opacity of the absolute panel
+                  tags$head(tags$style(
+                  HTML('
+                      #controls {background-color: rgba(55,55,55,1);;}
+                      #infectiondata {background-color: rgba(55,55,55,1);;}
+                      #sel_date {background-color: rgba(0,0,255,1);}'
+                      )
+                  )),
+                  # Customize the absolute panel
+                  absolutePanel(id = "controls", class = "panel panel-default",
+                          top = 270, left = 20, width = "17%", fixed=FALSE,
+                          draggable = FALSE, height = 400,
+                          tags$i(h4("Updated once daily. The data refers to: ", 
+                          tags$a(href="https://gisanddata.maps.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6", "Johns Hopkins COVID-19 dashboard."))),
+                          # HTML('<button data-toggle="collapse" data-target="#controlpanel">Control</button>'),
+                          # tags$div(id = 'controlpanel',  class="collapse",
+                          selectInput("scale", "Scale of the data:",
+                              c("Country/Region","Province/State")
+                          ),
+                          # changes the colour of the slider tag 
+                          tags$head(tags$style(HTML('.irs-from, .irs-to, .irs-single { background: rgba(55,55,55,0.5) }'
+                                                    ))),
+                          sliderInput("date",
+                                      label = h5("Select mapping date"),
+                                      min = as.Date('2020-01-22',"%Y-%m-%d"),
+                                      max = as.Date(max_css_date,"%Y-%m-%d"),
+                                      value = as.Date(max_css_date,"%Y-%m-%d"),
+                                      timeFormat = "%d %b", 
+                                      # animate=animationOptions(interval = 3000, loop = FALSE),
+                                      width = 300)
+                  ),
+
+                  absolutePanel(id = "infectiondata", class = "panel panel-default", top = 60, left = 20, width = "17%", fixed=FALSE, draggable = FALSE, height = 200,
+                          # h4(textOutput("Date_data"), align = "left",style="color:rgb(250,0,0)"),
+                          h1(textOutput("Total_cases"), align = "right",style="color:rgb(250,0,0)"),
+                          h1(textOutput("New_cases"), align = "right", style="color:#FBE251"),
+                          h1(textOutput("Death_cases"), align = "right", style="color:#FEDFE1"),
+                          ),
+                ),
+                tabPanel("MODEL", 
+                # Boxes need to be put in a row (or column)
+                  fluidRow(
+                    box(title = "Graph",
+                      status = "info",
+                      collapsible = TRUE,
+                      width = 8,
+                      plotlyOutput("plot", height = 400)),
+                    box(
+                      title = "Controls",
+                      status = "danger",
+                      # solidHeader = TRUE,
+                      collapsible = TRUE,
+                      width = 4,
+                      h3("This is a toy model. A SIR model is under construction.", align = "left",style="color:rgb(250,0,0)"),
+                      withMathJax(),
+                      helpText("Select parameters."),
+                      numericInput("beta", "\\(\\beta\\): the contact rate", 0.2),
+                      numericInput("gamma", "\\(\\gamma\\): the rate of the recovery and death", 0.2),
+                      numericInput("tend", "Time length", 100),
+                      actionButton("go", "Go"),
+                    ),
+                  )
                 )
-            )),
-            # Customize the absolute panel
-            absolutePanel(id = "controls", class = "panel panel-default",
-                    top = 285, left = 10, width = "17%", fixed=TRUE,
-                    draggable = FALSE, height = 600,
-                    tags$i(h4("Updated once daily. The data refers to: ", 
-                    tags$a(href="https://gisanddata.maps.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6", "Johns Hopkins COVID-19 dashboard."))),
-                    # HTML('<button data-toggle="collapse" data-target="#controlpanel">Control</button>'),
-                    # tags$div(id = 'controlpanel',  class="collapse",
-                    selectInput("scale", "Scale of the data:",
-                        c("Country/Region","Province/State")
-                    ),
-                    # changes the colour of the slider tag 
-                    tags$head(tags$style(HTML('.irs-from, .irs-to, .irs-single { background: rgba(55,55,55,0.5) }'
-                                              ))),
-                    sliderInput("date",
-                                label = h5("Select mapping date"),
-                                min = as.Date('2020-01-22',"%Y-%m-%d"),
-                                max = as.Date(max_css_date,"%Y-%m-%d"),
-                                value = as.Date(max_css_date,"%Y-%m-%d"),
-                                timeFormat = "%d %b", 
-                                # animate=animationOptions(interval = 3000, loop = FALSE),
-                                width = 300)
-            ),
-
-            absolutePanel(id = "infectiondata", class = "panel panel-default", top = 65, left = 10, width = "17%", fixed=TRUE, draggable = FALSE, height = 200,
-                    # h4(textOutput("Date_data"), align = "left",style="color:rgb(250,0,0)"),
-                    h1(textOutput("Total_cases"), align = "right",style="color:rgb(250,0,0)"),
-                    h1(textOutput("New_cases"), align = "right", style="color:#FBE251"),
-                    h1(textOutput("Death_cases"), align = "right", style="color:#FEDFE1"),
-                    ),
-
-          ),
-
-      # Second tab content
-      tabItem(tabName = "tab2",
-      # Boxes need to be put in a row (or column)
-        fluidRow(
-          box(title = "Graph",
-            status = "info",
-            collapsible = TRUE,
-            width = 8,
-            plotlyOutput("plot", height = 400)),
-          box(
-            title = "Controls",
-            status = "danger",
-            # solidHeader = TRUE,
-            collapsible = TRUE,
-            width = 4,
-            h3("This is a toy model. A SIR model is under construction.", align = "left",style="color:rgb(250,0,0)"),
-            withMathJax(),
-            helpText("Select parameters."),
-            numericInput("beta", "\\(\\beta\\): the contact rate", 0.2),
-            numericInput("gamma", "\\(\\gamma\\): the rate of the recovery and death", 0.2),
-            numericInput("tend", "Time length", 100),
-            actionButton("go", "Go"),
-          ),
-        )
-      )
-
-    ),
+            )
+        ),
 )
 
 
