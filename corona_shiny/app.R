@@ -181,12 +181,17 @@ body <- dashboardBody(
                           selectInput("scale", "Scale of the data:",
                               c("Country/Region","Province/State")
                           ),
+                          selectInput("category", "Category of the data:",
+                              c("Confirmed cases" = "confirmed",
+                              "Newly increase" = "new",
+                              "Death" = "death")
+                          ),
                           # changes the colour of the slider tag 
                           tags$head(tags$style(HTML('.irs-from, .irs-to, .irs-single { background: rgba(55,55,55,0.5) }'
                                                     ))),
                           sliderInput("date",
                                       label = h5("Select mapping date"),
-                                      min = as.Date('2020-01-22',"%Y-%m-%d"),
+                                      min = as.Date('2020-01-23',"%Y-%m-%d"),
                                       max = as.Date(max_css_date,"%Y-%m-%d"),
                                       value = as.Date(max_css_date,"%Y-%m-%d"),
                                       timeFormat = "%d %b", 
@@ -250,7 +255,7 @@ server <- function(input, output) {
 
   # The map plot on Tab 1
   output$plot_map <- renderPlotly({
-    corona_mapper(date = as.character(input$date), mode = input$scale)
+    corona_mapper(date = as.character(input$date), mode = input$scale, cate = input$category)
   })
 
   # Computing the data according the date user sets
