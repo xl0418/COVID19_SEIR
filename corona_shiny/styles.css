@@ -19,14 +19,49 @@ body, label, input, button, select {
 }
 h1, h2, h3, h4 { font-weight: 400; }
 
+
+/* Customize paneltab1 class*/
+.paneltab1 {
+	  background-color: rgb(55,55,55);
+	  padding: 0 10px 10px 10px;
+}
+
+/* Customize the three classes which are the slider tag*/
+.irs-from, .irs-to, .irs-single {
+	background: rgba(55,55,55,0) 
+}
+
+.irs-min, .irs-max {
+    color: rgb(205,205,205);
+    font-size: 10px;
+    line-height: 1.333;
+    text-shadow: none;
+    top: 0;
+    padding: 1px 3px;
+    background: rgba(0,0,0,0);
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+}
+
+/* Customize the select bar*/
+.form-control, .selectize-input, .selectize-control.single .selectize-input {
+    background: rgb(125,125,125);
+    color: rgb(225,225,225);
+    border-color: rgb(64,64,64);
+    border-radius: 5px;
+    height: 34px;
+    min-height: 34px;
+    padding: 6px 12px;
+}
+
 #controls {
   /* Appearance  */
-  padding: 0 10px 10px 10px;
   cursor: move;
   /* Fade out while not hovering*/
   opacity: 1;
   /* zoom: 0.9;*/
   transition: opacity 500ms 1s;
+  border-color: rgb(64,64,64);
 }
 
 #controls:hover {
@@ -35,6 +70,15 @@ h1, h2, h3, h4 { font-weight: 400; }
   transition-delay: 0;
 }
 
+#infectiondata {
+  /* Appearance  */
+  cursor: move;
+  /* Fade out while not hovering*/
+  opacity: 1;
+  /* zoom: 0.9;*/
+  transition: opacity 500ms 1s;
+  border-color: rgb(64,64,64);
+}
 
 /* Position and style citation 
 #cite {
