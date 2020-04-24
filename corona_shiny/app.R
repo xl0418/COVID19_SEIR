@@ -4,6 +4,7 @@ library(shinyWidgets)
 library(plotly)
 library(shinydashboard)
 library(dashboardthemes)
+library(shinyBS)
 library(icon)
 # Source the simulation code ----
 source("SIR_sim.R")
@@ -25,15 +26,16 @@ header <- dashboardHeader(title = "COVID-19 spread",titleWidth = 300)
 
 # Design the sidebar ----
 sidebar <- dashboardSidebar(
-  collapsed = TRUE,
+  disable = TRUE,
+  collapsed = FALSE,
   width = 300,
   # Customize the sidebar ----
   div(class = "inlay", style = "height:15px;width:100%;background-color: rgb(32,32,32);"),
   # Customize the sidebar menu
   sidebarMenu(
-    menuItem("GLOBAL MAP", tabName = "tab1", icon = icon("th")),
+    menuItem("GLOBAL MAP", tabName = "tab1"),
     br(),
-    menuItem("MODEL", tabName = "tab2", icon = icon("compass", class = 'far'))
+    menuItem("MODEL", tabName = "tab2") #, icon = icon("compass", class = 'far')
   )
 )
 
@@ -157,23 +159,23 @@ body <- dashboardBody(
             ),
 
             # Call the mapper function
-            plotlyOutput("plot_map", height = 1000),
+            div(plotlyOutput("plot_map", height = 1000, width = "82%"), align = "right"),
             # Set the background color and the opacity of the absolute panel
             tags$head(tags$style(
             HTML('
-                #controls {background-color: rgba(55,55,55,0.5);;}
-                #infectiondata {background-color: rgba(55,55,55,0.5);;}
+                #controls {background-color: rgba(55,55,55,1);;}
+                #infectiondata {background-color: rgba(55,55,55,1);;}
                 #sel_date {background-color: rgba(0,0,255,1);}'
                 )
             )),
             # Customize the absolute panel
             absolutePanel(id = "controls", class = "panel panel-default",
-                    top = 300, right = 20, width = 330, fixed=TRUE,
-                    draggable = TRUE, height = 'auto',
-
+                    top = 285, left = 10, width = "17%", fixed=TRUE,
+                    draggable = FALSE, height = 600,
                     tags$i(h4("Updated once daily. The data refers to: ", 
                     tags$a(href="https://gisanddata.maps.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6", "Johns Hopkins COVID-19 dashboard."))),
-
+                    # HTML('<button data-toggle="collapse" data-target="#controlpanel">Control</button>'),
+                    # tags$div(id = 'controlpanel',  class="collapse",
                     selectInput("scale", "Scale of the data:",
                         c("Country/Region","Province/State")
                     ),
@@ -188,16 +190,17 @@ body <- dashboardBody(
                                 timeFormat = "%d %b", 
                                 # animate=animationOptions(interval = 3000, loop = FALSE),
                                 width = 300)
-                  
             ),
 
-            absolutePanel(id = "infectiondata", class = "panel panel-default", top = 100, right = 20, width = 330, fixed=TRUE, draggable = FALSE, height = "auto",
-                    h1(textOutput("Total_cases"), align = "left",style="color:rgb(250,0,0)"),
-                    h1(textOutput("New_cases"), align = "left", style="color:#FBE251"),
-                    h1(textOutput("Death_cases"), align = "left", style="color:#FEDFE1"),
+            absolutePanel(id = "infectiondata", class = "panel panel-default", top = 65, left = 10, width = "17%", fixed=TRUE, draggable = FALSE, height = 200,
+                    # h4(textOutput("Date_data"), align = "left",style="color:rgb(250,0,0)"),
+                    h1(textOutput("Total_cases"), align = "right",style="color:rgb(250,0,0)"),
+                    h1(textOutput("New_cases"), align = "right", style="color:#FBE251"),
+                    h1(textOutput("Death_cases"), align = "right", style="color:#FEDFE1"),
                     ),
 
-      ),
+          ),
+
       # Second tab content
       tabItem(tabName = "tab2",
       # Boxes need to be put in a row (or column)
@@ -213,21 +216,19 @@ body <- dashboardBody(
             # solidHeader = TRUE,
             collapsible = TRUE,
             width = 4,
+            h3("This is a toy model. A SIR model is under construction.", align = "left",style="color:rgb(250,0,0)"),
             withMathJax(),
             helpText("Select parameters."),
             numericInput("beta", "\\(\\beta\\): the contact rate", 0.2),
             numericInput("gamma", "\\(\\gamma\\): the rate of the recovery and death", 0.2),
             numericInput("tend", "Time length", 100),
             actionButton("go", "Go"),
-
           ),
-
-
         )
       )
 
     ),
-  )
+)
 
 
 ui <- dashboardPage(header, sidebar, body)
@@ -235,6 +236,7 @@ ui <- dashboardPage(header, sidebar, body)
 
 # Server logic
 server <- function(input, output) {
+
   # Simulating results and plots on Tab 2
   parasInput <- reactiveValues(argu = NULL)
   observeEvent(input$go, {
@@ -254,6 +256,9 @@ server <- function(input, output) {
 
   # Computing the data according the date user sets
   dailyresult <- reactive({computedailydata(date = as.character(input$date))})
+  output$Date_data <- renderText({
+    paste0("Data on ", as.character(input$date))
+  })
   output$Total_cases <- renderText({
     paste0(prettyNum(dailyresult()[[1]], big.mark=","), " cases")
   })
