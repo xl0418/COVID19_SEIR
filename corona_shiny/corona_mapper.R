@@ -54,8 +54,8 @@ corona_mapper <- function(date = '2020-04-21', mode = 'Province/State', cate = '
         death_data <- daily_death_global
 
         # Load the US cities data from Johns Hopkins Github repo
-        daily_data_us = read.csv("E:/COVID19_SEIR/corona_shiny/time_series_covid19_confirmed_US.csv")  # for test "E:/COVID19_SEIR/corona_shiny/"
-        death_data_us = read.csv("E:/COVID19_SEIR/corona_shiny/time_series_covid19_deaths_US.csv")
+        daily_data_us = read.csv("time_series_covid19_confirmed_US.csv")  # for test "E:/COVID19_SEIR/corona_shiny/"
+        death_data_us = read.csv("time_series_covid19_deaths_US.csv")
 
         # Load the coordinates of US states
         usstate_geo_info = read.csv("GeoInfoUS.csv")
