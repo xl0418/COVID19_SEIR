@@ -121,10 +121,10 @@ theme_grey_dark <- shinyDashboardThemeDIY(
   , buttonBorderColorHover = "rgb(50,50,50)"
 
 ## textbox input
-  , textboxBackColor = "rgb(125,125,125)"
+  , textboxBackColor = "rgb(45,45,45)"
   , textboxBorderColor = "rgb(64,64,64)"
   , textboxBorderRadius = 5
-  , textboxBackColorSelect = "rgb(230,230,230)"
+  , textboxBackColorSelect = "rgb(64,64,64)"
   , textboxBorderColorSelect = "rgb(128,128,128)"
 
 ### tables
