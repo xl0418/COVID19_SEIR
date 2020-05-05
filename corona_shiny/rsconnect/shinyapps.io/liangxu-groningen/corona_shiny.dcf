@@ -5,6 +5,6 @@ account: liangxu-groningen
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2174635
-bundleId: 3078865
+bundleId: 3105163
 url: https://liangxu-groningen.shinyapps.io/corona_shiny/
-when: 1588113189.77976
+when: 1588669059.43921

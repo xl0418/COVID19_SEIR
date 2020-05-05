@@ -9,7 +9,7 @@ computedailydata <- function(date){
     month <- as.numeric(date_value[[1]])[2]
     day <- as.numeric(date_value[[1]])[3]
     converted_date_value <- paste0('X',month,'.',day,'.',year)
-    last_date <- paste0('X',month,'.',(day-1),'.',year)
+    last_date <- if(day-1 == 0) paste0('X',(month-1),'.',30,'.',year) else paste0('X',month,'.',(day-1),'.',year)
     total_cases <- sum(daily_data_global[converted_date_value])
     newly_cases <- total_cases - sum(daily_data_global[last_date])
     total_death_cases <- sum(daily_death_global[converted_date_value])
